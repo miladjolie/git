@@ -21,10 +21,14 @@ repack_into_n () {
 	mkdir staging &&
 
 	git rev-list --first-parent HEAD |
-	sed -n '1~5p' |
-	head -n "$1" |
-	perl -e 'print reverse <>' \
-	>pushes
+	perl -e '
+		my $n = shift;
+		while (<>) {
+			last unless @commits < $n;
+			push @commits, $_ if $. % 5 == 1;
+		}
+		print reverse @commits;
+	' "$1" >pushes
 
 	# create base packfile
 	head -n 1 pushes |
@@ -71,6 +75,10 @@ do
 
 	test_perf "rev-list ($nr_packs)" '
 		git rev-list --objects --all >/dev/null
+	'
+
+	test_perf "abbrev-commit ($nr_packs)" '
+		git rev-list --abbrev-commit HEAD >/dev/null
 	'
 
 	# This simulates the interesting part of the repack, which is the
