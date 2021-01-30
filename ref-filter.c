@@ -67,7 +67,7 @@ struct refname_atom {
 	int lstrip, rstrip;
 };
 
-struct ref_trailer_buf {
+static struct ref_trailer_buf {
 	struct string_list filter_list;
 	struct strbuf sepbuf;
 	struct strbuf kvsepbuf;
