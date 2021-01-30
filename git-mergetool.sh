@@ -333,9 +333,19 @@ merge_file () {
 	checkout_staged_file 2 "$MERGED" "$LOCAL"
 	checkout_staged_file 3 "$MERGED" "$REMOTE"
 
-	if test "$(git config --get mergetool.hideResolved)" != "false"
+	# hideResolved preferences hierarchy:
+	# First respect user's tool-specific configuration if exists.
+	if test "$(git config --get "mergetool.$merge_tool.hideResolved")" != "false"
 	then
-		hide_resolved
+		# Next respect tool-specified configuration.
+		if hide_resolved_enabled
+		then
+			# Finally respect if user has a global disable.
+			if test "$(git config --get "mergetool.hideResolved")" != "false"
+			then
+				hide_resolved
+			fi
+		fi
 	fi
 
 	if test -z "$local_mode" || test -z "$remote_mode"
