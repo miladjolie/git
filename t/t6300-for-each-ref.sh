@@ -874,7 +874,7 @@ test_trailer_option() {
 	option="$2"
 	expect="$3"
 	test_expect_success "$title" '
-		echo $expect >expect &&
+		echo "$expect" >expect &&
 		git for-each-ref --format="%($option)" refs/heads/main >actual &&
 		test_cmp expect actual &&
 		git for-each-ref --format="%(contents:$option)" refs/heads/main >actual &&
@@ -883,13 +883,18 @@ test_trailer_option() {
 }
 
 test_trailer_option '%(trailers:key=foo) shows that trailer' \
-	'trailers:key=Signed-off-by' 'Signed-off-by: A U Thor <author@example.com>\n'
+	'trailers:key=Signed-off-by' 'Signed-off-by: A U Thor <author@example.com>
+'
 test_trailer_option '%(trailers:key=foo) is case insensitive' \
-	'trailers:key=SiGned-oFf-bY' 'Signed-off-by: A U Thor <author@example.com>\n'
+	'trailers:key=SiGned-oFf-bY' 'Signed-off-by: A U Thor <author@example.com>
+'
 test_trailer_option '%(trailers:key=foo:) trailing colon also works' \
-	'trailers:key=Signed-off-by:' 'Signed-off-by: A U Thor <author@example.com>\n'
+	'trailers:key=Signed-off-by:' 'Signed-off-by: A U Thor <author@example.com>
+'
 test_trailer_option '%(trailers:key=foo) multiple keys' \
-	'trailers:key=Reviewed-by:,key=Signed-off-by' 'Reviewed-by: A U Thor <author@example.com>\nSigned-off-by: A U Thor <author@example.com>\n'
+	'trailers:key=Reviewed-by:,key=Signed-off-by' 'Reviewed-by: A U Thor <author@example.com>
+Signed-off-by: A U Thor <author@example.com>
+'
 test_trailer_option '%(trailers:key=nonexistent) becomes empty' \
 	'trailers:key=Shined-off-by:' ''
 
@@ -928,11 +933,14 @@ test_expect_success 'pretty format %(trailers:key=foo,only=no) also includes non
 '
 
 test_trailer_option '%(trailers:key=foo,valueonly) shows only value' \
-	'trailers:key=Signed-off-by,valueonly' 'A U Thor <author@example.com>\n'
+	'trailers:key=Signed-off-by,valueonly' 'A U Thor <author@example.com>
+'
 test_trailer_option '%(trailers:separator) changes separator' \
 	'trailers:separator=%x2C,key=Reviewed-by,key=Signed-off-by:' 'Reviewed-by: A U Thor <author@example.com>,Signed-off-by: A U Thor <author@example.com>'
 test_trailer_option '%(trailers:key_value_separator) changes key-value separator' \
-	'trailers:key_value_separator=%x2C,key=Reviewed-by,key=Signed-off-by:' 'Reviewed-by,A U Thor <author@example.com>\nSigned-off-by,A U Thor <author@example.com>\n'
+	'trailers:key_value_separator=%x2C,key=Reviewed-by,key=Signed-off-by:' 'Reviewed-by,A U Thor <author@example.com>
+Signed-off-by,A U Thor <author@example.com>
+'
 test_trailer_option '%(trailers:separator,key_value_separator) changes both separators' \
 	'trailers:separator=%x2C,key_value_separator=%x2C,key=Reviewed-by,key=Signed-off-by:' 'Reviewed-by,A U Thor <author@example.com>,Signed-off-by,A U Thor <author@example.com>'
 
